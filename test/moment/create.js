@@ -442,6 +442,24 @@ exports.create = {
         test.done();
     },
 
+    // This test will always pass as issue is with IE and Firefox and for that
+    // we would have to add other browsers support to testing suit
+    "short years in us format" : function(test) {
+        var result_format = 'MM/DD/YYYY',
+            expected_string = '12/02/2014',
+            a = [
+            '12/02/14',
+            '12/02/2014'
+            ],
+            i;
+
+        test.expect(a.length);
+        for (i = 0; i < a.length; i++) {
+            test.equal(moment(a[i]).format(result_format), expected_string, a[i] + ' ---> ' + expected_string);
+        }
+        test.done();
+    },
+
     "parsing into a language" : function (test) {
         test.expect(2);
 
