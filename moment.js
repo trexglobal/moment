@@ -45,6 +45,9 @@
         isoRegex = /^\s*\d{4}-\d\d-\d\d((T| )(\d\d(:\d\d(:\d\d(\.\d\d?\d?)?)?)?)?([\+\-]\d\d:?\d\d)?)?/,
         isoFormat = 'YYYY-MM-DDTHH:mm:ssZ',
 
+        // US short year date format MM/DD/YYYY
+        usShortYearRegex = /^\s*(\d{1,2})\/(\d{1,2})\/(\d{2})\s*$/,
+
         // iso time formats and regexes
         isoTimes = [
             ['HH:mm:ss.S', /(T| )\d\d:\d\d:\d\d\.\d{1,3}/],
@@ -810,7 +813,8 @@
     // date from iso format
     function makeDateFromString(config) {
         var i,
-            string = config._i;
+            string = config._i,
+            match_us_short_year;
         if (isoRegex.exec(string)) {
             config._f = 'YYYY-MM-DDT';
             for (i = 0; i < 4; i++) {
@@ -824,6 +828,13 @@
             }
             makeDateFromStringAndFormat(config);
         } else {
+            // Match against US format to prevent 1900 vs 2000 discrepancy between browsers(Chrome vs FF and IE)
+            match_us_short_year = usShortYearRegex.exec(string);
+            if (match_us_short_year) {
+                // always prepending '20' as there is no JS in Y3K ;)
+                string = match_us_short_year[1] + '/' + match_us_short_year[2] + '/20' + match_us_short_year[3];
+            }
+
             config._d = new Date(string);
         }
     }
